@@ -29,7 +29,6 @@ import gg.skytils.skytilsmod.Skytils
 import gg.skytils.skytilsmod.Skytils.Companion.mc
 import gg.skytils.skytilsmod.commands.impl.RepartyCommand
 import gg.skytils.skytilsmod.features.impl.trackers.Tracker
-import gg.skytils.skytilsmod.gui.PotionNotificationsGui
 import gg.skytils.skytilsmod.gui.SpiritLeapNamesGui
 import gg.skytils.skytilsmod.mixins.transformers.accessors.AccessorCommandHandler
 import gg.skytils.skytilsmod.utils.Utils
@@ -2005,15 +2004,15 @@ object Config : Vigilant(
     )
     var bigTentacleTag = false
 
-    @Property(
-        type = PropertyType.BUTTON, name = "Potion Duration Notifications",
-        description = "Displays a notification when a Potion is about to expire.",
-        category = "Miscellaneous", subcategory = "Quality of Life"
-    )
-    @Suppress("unused")
-    fun openPotionEffectTimersGUI() {
-        Skytils.displayScreen = PotionNotificationsGui()
-    }
+//    @Property(
+//        type = PropertyType.BUTTON, name = "Potion Duration Notifications",
+//        description = "Displays a notification when a Potion is about to expire.",
+//        category = "Miscellaneous", subcategory = "Quality of Life"
+//    )
+//    @Suppress("unused")
+//    fun openPotionEffectTimersGUI() {
+//        Skytils.displayScreen = PotionNotificationsGui()
+//    }
 
 
     @Property(
