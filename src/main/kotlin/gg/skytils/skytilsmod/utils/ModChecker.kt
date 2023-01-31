@@ -44,7 +44,7 @@ object ModChecker {
 
     fun checkModdedForge() {
         if (!isModded) return
-        showMessage()
+//        showMessage()
     }
 
     private fun showMessage() {
