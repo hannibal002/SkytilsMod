@@ -93,7 +93,6 @@ public class EssentialPlatformSetup {
                 break;
             }
         }
-        LogManager.getLogger().info("Data URL: " + Reference.dataUrl);
 
         try {
             if (Integer.parseInt(makeRequest(Reference.dataUrl + "api/version").trim()) > Reference.apiVersion) {
