@@ -236,7 +236,7 @@ class Skytils {
         config.init()
         hylinAPI.key = config.apiKey
 
-        UpdateChecker.downloadDeleteTask()
+//        UpdateChecker.downloadDeleteTask()
 
         arrayOf(
             this,
@@ -247,7 +247,7 @@ class Skytils {
             SBInfo,
             SoundQueue,
             TickTaskManager,
-            UpdateChecker,
+//            UpdateChecker,
 
             AlignmentTaskSolver,
             ArmorColor,

@@ -18,10 +18,7 @@
 package gg.skytils.skytilsmod.commands.impl
 
 import gg.essential.universal.UChat
-import gg.essential.universal.utils.MCClickEventAction
 import gg.essential.universal.wrappers.UPlayer
-import gg.essential.universal.wrappers.message.UMessage
-import gg.essential.universal.wrappers.message.UTextComponent
 import gg.skytils.skytilsmod.Skytils
 import gg.skytils.skytilsmod.Skytils.Companion.client
 import gg.skytils.skytilsmod.Skytils.Companion.failPrefix
@@ -31,7 +28,6 @@ import gg.skytils.skytilsmod.Skytils.Companion.successPrefix
 import gg.skytils.skytilsmod.commands.BaseCommand
 import gg.skytils.skytilsmod.core.DataFetcher
 import gg.skytils.skytilsmod.core.PersistentSave
-import gg.skytils.skytilsmod.core.UpdateChecker
 import gg.skytils.skytilsmod.features.impl.events.GriffinBurrows
 import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.features.impl.mining.MiningFeatures
@@ -244,36 +240,36 @@ object SkytilsCommand : BaseCommand("skytils", listOf("st")) {
             }
 
             "enchant" -> Skytils.displayScreen = EnchantNamesGui()
-            "update" -> {
-                try {
-                    Skytils.IO.launch {
-                        async { UpdateChecker.updateGetter.run() }.invokeOnCompletion {
-                            if (UpdateChecker.updateGetter.updateObj == null) {
-                                return@invokeOnCompletion UChat.chat("$prefix §cNo new update found.")
-                            }
-                            val message = UMessage(
-                                "$prefix §7Update for version ${
-                                    UpdateChecker.updateGetter.updateObj!!.tagName
-                                } is available! ",
-                                UTextComponent("§a[Update Now] ").setClick(
-                                    MCClickEventAction.RUN_COMMAND,
-                                    "/skytils updateNow"
-                                ).setHoverText("§eUpdates and restarts your game"),
-                                UTextComponent("§b[Update Later] ").setClick(
-                                    MCClickEventAction.RUN_COMMAND,
-                                    "/skytils updateLater"
-                                ).setHoverText("§eUpdates after you close your game")
-                            )
-                            message.chat()
-                        }
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
+//            "update" -> {
+//                try {
+//                    Skytils.IO.launch {
+//                        async { UpdateChecker.updateGetter.run() }.invokeOnCompletion {
+//                            if (UpdateChecker.updateGetter.updateObj == null) {
+//                                return@invokeOnCompletion UChat.chat("$prefix §cNo new update found.")
+//                            }
+//                            val message = UMessage(
+//                                "$prefix §7Update for version ${
+//                                    UpdateChecker.updateGetter.updateObj!!.tagName
+//                                } is available! ",
+//                                UTextComponent("§a[Update Now] ").setClick(
+//                                    MCClickEventAction.RUN_COMMAND,
+//                                    "/skytils updateNow"
+//                                ).setHoverText("§eUpdates and restarts your game"),
+//                                UTextComponent("§b[Update Later] ").setClick(
+//                                    MCClickEventAction.RUN_COMMAND,
+//                                    "/skytils updateLater"
+//                                ).setHoverText("§eUpdates after you close your game")
+//                            )
+//                            message.chat()
+//                        }
+//                    }
+//                } catch (ex: Exception) {
+//                    ex.printStackTrace()
+//                }
+//            }
 
-            "updatenow" -> Skytils.displayScreen = UpdateGui(true)
-            "updatelater" -> Skytils.displayScreen = UpdateGui(false)
+//            "updatenow" -> Skytils.displayScreen = UpdateGui(true)
+//            "updatelater" -> Skytils.displayScreen = UpdateGui(false)
             "ping" -> {
                 Ping.invokedCommand = true
                 Ping.sendPing()
