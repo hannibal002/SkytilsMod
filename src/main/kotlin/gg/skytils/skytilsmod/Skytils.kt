@@ -62,6 +62,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.cache.*
+import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
@@ -92,7 +93,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent
-import skytils.hylin.HylinAPI.Companion.createHylinAPI
+import skytils.hylin.HylinAPI
 import sun.misc.Unsafe
 import java.io.File
 import java.util.*
@@ -166,7 +167,7 @@ class Skytils {
         override val coroutineContext: CoroutineContext = dispatcher + SupervisorJob() + CoroutineName("Skytils")
 
         val hylinAPI by lazy {
-            createHylinAPI("", false)
+            HylinAPI("", false, this, HylinConnectionHandler, "https://hypixel.skytils.gg")
         }
 
         val deobfEnvironment by lazy {
@@ -192,6 +193,10 @@ class Skytils {
         }
 
         val client = HttpClient(CIO) {
+            install(ContentEncoding) {
+                deflate(1.0F)
+                gzip(0.9F)
+            }
             install(ContentNegotiation) {
                 json(json)
             }
@@ -234,8 +239,6 @@ class Skytils {
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         config.init()
-        hylinAPI.key = config.apiKey
-
 //        UpdateChecker.downloadDeleteTask()
 
         arrayOf(

@@ -54,14 +54,6 @@ object Config : Vigilant(
     var fetchLowestBINPrices = false
 
     @Property(
-        type = PropertyType.TEXT, name = "Hypixel API Key",
-        description = "Your Hypixel API key, which can be obtained from /api new. Required for some features.",
-        category = "General", subcategory = "API",
-        protectedText = true
-    )
-    var apiKey = System.getenv("HYPIXEL_KEY") ?: ""
-
-    @Property(
         type = PropertyType.SELECTOR, name = "Command Alias Mode",
         description = "Choose which mode to use for Command Aliases.",
         category = "General", subcategory = "Command Aliases",
@@ -2823,10 +2815,6 @@ object Config : Vigilant(
                 (ClientCommandHandler.instance as AccessorCommandHandler).commandMap["rp"] =
                     RepartyCommand
             }
-        }
-
-        registerListener("apiKey") { key: String ->
-            Skytils.hylinAPI.key = key
         }
     }
 

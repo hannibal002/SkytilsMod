@@ -69,10 +69,7 @@ object PartyFinderStats {
                     e.printStackTrace()
                     UChat.chat(
                         "$failPrefix §cUnable to retrieve profile information: ${
-                            e.message?.replace(
-                                Skytils.config.apiKey,
-                                "*".repeat(Skytils.config.apiKey.length)
-                            )
+                            e.message
                         }"
                     )
                 }
@@ -93,7 +90,7 @@ object PartyFinderStats {
                     val name = playerResponse.formattedName
 
                     val secrets = playerResponse.achievements.getOrDefault("skyblock_treasure_hunter", 0)
-                    val component = UMessage("&2&l-----------------------------\n")
+                    val component = UMessage("&2&m--------------------------------\n")
                         .append("$name §8» §dCata §9${NumberUtil.nf.format(cataLevel)} ")
                         .append(
                             UTextComponent("§7[Stats]\n\n")
@@ -184,28 +181,16 @@ object PartyFinderStats {
                                 append("§2§l●§a ")
                                 append(if (i == 0) "Entrance: " else "Floor $i: ")
                                 append("§e")
-                                append(if (i in completionObj) completionObj[i] else "§cDNF")
+                                if (i in completionObj) {
+                                    append(completionObj[i])
+                                    append(" §7(§6S+ §e")
+                                    append(cataData.fastestTimeSPlus?.get(i)?.timeFormat() ?: "§cNo Comp")
+                                    append("§7)")
+                                } else append("§cDNF")
                                 if (i != highestFloor)
                                     append("\n")
                             }
                         }))
-
-                        cataData.fastestTimeSPlus?.run {
-                            component.append(
-                                UTextComponent("§aFastest §6S+ §aCompletions: §7(Hover)\n\n").setHoverText(
-                                    buildString {
-                                        for (i in 0..highestFloor) {
-                                            append("§2§l●§a ")
-                                            append(if (i == 0) "Entrance: " else "Floor $i: ")
-                                            append("§e")
-                                            append(this@run[i]?.timeFormat() ?: "§cNo S+ Completion")
-                                            if (i != highestFloor)
-                                                append("\n")
-                                        }
-                                    }
-                                )
-                            )
-                        }
                     }
 
                     masterCataData?.highestCompletion?.let { highestFloor ->
@@ -214,36 +199,24 @@ object PartyFinderStats {
                             UTextComponent("§l§4MM §cFloor Completions: §7(Hover)\n").setHoverText(
                                 buildString {
                                     for (i in 1..highestFloor) {
-                                        append("§2§l●§a ")
+                                        append("§c§l●§4 ")
                                         append("Floor $i: ")
                                         append("§e")
-                                        append(if (i in masterCompletionObj) masterCompletionObj[i] else "§cDNF")
+                                        if (i in masterCompletionObj) {
+                                            append(masterCompletionObj[i])
+                                            append(" §7(§6S+ §e")
+                                            append(masterCataData.fastestTimeSPlus?.get(i)?.timeFormat() ?: "§cNo Comp")
+                                            append("§7)")
+                                        } else append("§cDNF")
                                         if (i != highestFloor)
                                             append("\n")
                                     }
                                 })
                         )
-
-                        cataData.fastestTimeSPlus?.run {
-                            component.append(
-                                UTextComponent("§l§4MM §cFastest §6S+ §cCompletions: §7(Hover)\n\n").setHoverText(
-                                    buildString {
-                                        for (i in 1..highestFloor) {
-                                            append("§2§l●§a ")
-                                            append("Floor $i: ")
-                                            append("§e")
-                                            append(this@run[i]?.timeFormat() ?: "§cNo S+ Completion")
-                                            if (i != highestFloor)
-                                                append("\n")
-                                        }
-                                    }
-                                )
-                            )
-                        }
                     }
 
                     component
-                        .append("§aTotal Secrets Found: §l§e${NumberUtil.nf.format(secrets)}\n")
+                        .append("\n§aTotal Secrets Found: §l§e${NumberUtil.nf.format(secrets)}\n")
                         .append(
                             "§aBlood Mobs Killed: §l§e${
                                 NumberUtil.nf.format(
@@ -256,7 +229,7 @@ object PartyFinderStats {
                             UTextComponent("§c§l[KICK]\n").setHoverText("§cClick to kick ${name}§c.")
                                 .setClick(ClickEvent.Action.SUGGEST_COMMAND, "/p kick $username")
                         )
-                        .append("&2&l-----------------------------")
+                        .append("&2&m--------------------------------")
                         .chat()
                 } ?: UChat.chat("$failPrefix §c$username has not entered The Catacombs!")
             } catch (e: Throwable) {
@@ -267,10 +240,7 @@ object PartyFinderStats {
             e.printStackTrace()
             UChat.chat(
                 "$failPrefix §cFailed to get dungeon stats: ${
-                    e.message?.replace(
-                        Skytils.config.apiKey,
-                        "*".repeat(Skytils.config.apiKey.length)
-                    )
+                    e.message
                 }"
             )
         }
