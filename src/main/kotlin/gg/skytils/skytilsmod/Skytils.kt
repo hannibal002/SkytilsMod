@@ -34,6 +34,7 @@ import gg.skytils.skytilsmod.features.impl.events.MayorDiana
 import gg.skytils.skytilsmod.features.impl.events.MayorJerry
 import gg.skytils.skytilsmod.features.impl.events.TechnoMayor
 import gg.skytils.skytilsmod.features.impl.farming.FarmingFeatures
+import gg.skytils.skytilsmod.features.impl.farming.GardenFeatures
 import gg.skytils.skytilsmod.features.impl.farming.TreasureHunter
 import gg.skytils.skytilsmod.features.impl.handlers.*
 import gg.skytils.skytilsmod.features.impl.mining.MiningFeatures
@@ -280,6 +281,7 @@ class Skytils {
             FarmingFeatures,
             FavoritePets,
             Funny,
+            GardenFeatures,
             GlintCustomizer,
             GriffinBurrows,
             IceFillSolver,
