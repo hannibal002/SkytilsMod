@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -45,6 +45,8 @@ import gg.skytils.skytilsmod.utils.graphics.ScreenRenderer
 import gg.skytils.skytilsmod.utils.graphics.SmartFontRenderer.TextAlignment
 import gg.skytils.skytilsmod.utils.graphics.SmartFontRenderer.TextShadow
 import gg.skytils.skytilsmod.utils.graphics.colors.CommonColors
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import net.minecraft.block.BlockDoor
 import net.minecraft.block.BlockLadder
 import net.minecraft.block.BlockLiquid
@@ -73,14 +75,16 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Keyboard
 import java.awt.Color
-import java.util.regex.Pattern
 import kotlin.math.pow
 
 object ItemFeatures {
 
-    private val candyPattern = Pattern.compile("§a\\((\\d+)/10\\) Pet Candy Used")
+    private val candyPattern = Regex("§a\\((\\d+)/10\\) Pet Candy Used")
     private val headPattern =
         Regex("(?:DIAMOND|GOLD)_(?:(BONZO)|(SCARF)|(PROFESSOR)|(THORN)|(LIVID)|(SADAN)|(NECRON))_HEAD")
+
+    // TODO: it is possible for 2 items to have the same name but different material
+    val itemIdToNameLookup = hashMapOf<String, String>()
     val sellPrices = HashMap<String, Double>()
     val bitCosts = HashMap<String, Int>()
     val hotbarRarityCache = arrayOfNulls<ItemRarity>(9)
@@ -208,9 +212,17 @@ object ItemFeatures {
                     if (event.slot.hasStack) {
                         val stack = event.slot.stack
                         if (stack.displayName.containsAny(
-                                "Defuse Kit", "Lever", "Torch",
-                                "Stone Button", "Tripwire Hook", "Journal Entry",
-                                "Training Weights", "Mimic Fragment", "Healing 8 Splash Potion", "Healing VIII Splash Potion", "Premium Flesh"
+                                "Defuse Kit",
+                                "Lever",
+                                "Torch",
+                                "Stone Button",
+                                "Tripwire Hook",
+                                "Journal Entry",
+                                "Training Weights",
+                                "Mimic Fragment",
+                                "Healing 8 Splash Potion",
+                                "Healing VIII Splash Potion",
+                                "Premium Flesh"
                             )
                         ) event.slot highlight Color(255, 50, 150, 255)
                     }
@@ -608,9 +620,8 @@ object ItemFeatures {
         }
         if (Skytils.config.showPetCandies && item.item === Items.skull) {
             lore?.forEach { line ->
-                val candyLineMatcher = candyPattern.matcher(line)
-                if (candyLineMatcher.matches()) {
-                    stackTip = candyLineMatcher.group(1).toString()
+                candyPattern.find(line)?.let {
+                    stackTip = it.groups[1]!!.value
                     return@forEach
                 }
             }
@@ -695,23 +706,12 @@ object ItemFeatures {
             val block = obj.blockPos ?: return
             val state = mc.theWorld.getBlockState(block)
             if (isValidEtherwarpPos(obj)) {
-                val (viewerX, viewerY, viewerZ) = RenderUtil.getViewerPos(event.partialTicks)
-                val matrixStack = UMatrixStack()
-                GlStateManager.disableCull()
-                GlStateManager.disableDepth()
-                GlStateManager.enableBlend()
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0)
-                state.block.setBlockBoundsBasedOnState(mc.theWorld, block)
-                RenderUtil.drawFilledBoundingBox(
-                    matrixStack,
-                    state.block.getSelectedBoundingBox(mc.theWorld, block)
-                        .expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026)
-                        .offset(-viewerX, -viewerY, -viewerZ),
-                    Skytils.config.showEtherwarpTeleportPosColor
+                RenderUtil.drawSelectionBox(
+                    block,
+                    state.block,
+                    Skytils.config.showEtherwarpTeleportPosColor,
+                    event.partialTicks
                 )
-                GlStateManager.disableBlend()
-                GlStateManager.enableCull()
-                GlStateManager.enableDepth()
             }
         }
     }
@@ -913,4 +913,18 @@ object ItemFeatures {
             Skytils.guiManager.registerElement(this)
         }
     }
+
+    @Serializable
+    data class APISBItem(
+        @SerialName("id")
+        val id: String,
+        @SerialName("material")
+        val material: String,
+        @SerialName("motes_sell_price")
+        val motesSellPrice: Double? = null,
+        @SerialName("name")
+        val name: String,
+        @SerialName("npc_sell_price")
+        val npcSellPrice: Double? = null,
+    )
 }

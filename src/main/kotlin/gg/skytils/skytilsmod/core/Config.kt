@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -49,7 +49,7 @@ object Config : Vigilant(
         type = PropertyType.SWITCH, name = "Fetch Lowest BIN Prices",
         description = "Fetches the lowest BIN features for Skytils to use.\nSome features will be hidden and will not work if this switch isn't on.",
         category = "General", subcategory = "API",
-        searchTags = ["BIN", "Bits", "Price Input", "Protect Items Above Value", "Chest Profit", "Dungeon Profit"]
+        searchTags = ["BIN", "Bits", "Price Input", "Protect Items Above Value", "Chest Profit", "Dungeon Profit", "Container Sell Value", "Vistor Offer Helper"]
     )
     var fetchLowestBINPrices = false
 
@@ -587,6 +587,13 @@ object Config : Vigilant(
     var showSadanInterest = false
 
     @Property(
+        type = PropertyType.SWITCH, name = "Show Terracotta Respawn Time",
+        description = "Displays a timer until Terracotta respawn",
+        category = "Dungeons", subcategory = "Quality of Life"
+    )
+    var terracottaRespawnTimer = false
+
+    @Property(
         type = PropertyType.SELECTOR, name = "Show Necron's HP",
         description = "Shows additional info about Necron's health.",
         category = "Dungeons", subcategory = "Quality of Life",
@@ -607,6 +614,13 @@ object Config : Vigilant(
         category = "Dungeons", subcategory = "Quality of Life"
     )
     var showWitherKingDragonsHP = false
+
+    @Property(
+        type = PropertyType.SWITCH, name = "Show Wither King's Dragons' Spawn Timer",
+        description = "Displays a timer for when the dragons are about to spawn in.",
+        category = "Dungeons", subcategory = "Quality of Life"
+    )
+    var showWitherKingDragonsSpawnTimer = false
 
     @Property(
         type = PropertyType.SWITCH, name = "Spirit Bear Timer",
@@ -1033,6 +1047,27 @@ object Config : Vigilant(
     var gardenPlotCleanupHelper = false
 
     @Property(
+        type = PropertyType.SWITCH, name = "Show Sam's Scythe Blocks",
+        description = "Shows the blocks which will be broken when using Sam's Scythe or Garden Scythe.",
+        category = "Farming", subcategory = "Garden"
+    )
+    var showSamScytheBlocks = false
+
+    @Property(
+        type = PropertyType.COLOR, name = "Color of Sam's Scythe Marked Blocks",
+        description = "Sets the color of the highlighted blocks.",
+        category = "Farming", subcategory = "Garden"
+    )
+    var samScytheColor = Color(255, 0, 0, 50)
+
+    @Property(
+        type = PropertyType.SWITCH, name = "Visitor Offer Helper",
+        description = "Displays information about visitor offers.",
+        category = "Farming", subcategory = "Garden"
+    )
+    var visitorOfferHelper = false
+
+    @Property(
         type = PropertyType.SWITCH, name = "Visitor Notifications",
         description = "Sends a message in chat when a visitor is at your garden.",
         category = "Farming", subcategory = "Garden"
@@ -1255,13 +1290,6 @@ object Config : Vigilant(
         category = "Miscellaneous", subcategory = "Fixes"
     )
     var fixFallingSandRendering = false
-
-    @Property(
-        type = PropertyType.SWITCH, name = "Fix SBA Chroma",
-        description = "Fixes SBA chroma with Patcher 1.6",
-        category = "Miscellaneous", subcategory = "Fixes"
-    )
-    var fixSbaChroma = true
 
     @Property(
         type = PropertyType.SWITCH, name = "Fix World Time",
@@ -1912,6 +1940,13 @@ object Config : Vigilant(
         category = "Miscellaneous", subcategory = "Quality of Life"
     )
     var noHurtcam = false
+
+    @Property(
+        type = PropertyType.SWITCH, name = "Party Addons",
+        description = "Adds a few features to the party list.\n§eNote: Requires Hypixel Language to be set to English. §7(/lang en)",
+        category = "Miscellaneous", subcategory = "Quality of Life"
+    )
+    var partyAddons = false
 
     @Property(
         type = PropertyType.SWITCH, name = "Power Orb Lock",
@@ -2726,6 +2761,8 @@ object Config : Vigilant(
     init {
         addDependency("showEtherwarpTeleportPosColor", "showEtherwarpTeleportPos")
 
+        addDependency("samScytheColor", "showSamScytheBlocks")
+
         addDependency("itemRarityOpacity", "showItemRarity")
         addDependency("itemRarityShape", "showItemRarity")
 
@@ -2735,7 +2772,8 @@ object Config : Vigilant(
             "dungeonChestProfit",
             "showCoinsPerBit",
             "protectItemBINThreshold",
-            "containerSellValue"
+            "containerSellValue",
+            "visitorOfferHelper"
         ).forEach { propertyName ->
             addDependency(propertyName, "fetchLowestBINPrices")
             registerListener(propertyName) { prop: Any ->

@@ -1,6 +1,6 @@
 ///*
 // * Skytils - Hypixel Skyblock Quality of Life Mod
-// * Copyright (C) 2022 Skytils
+// * Copyright (C) 2020-2023 Skytils
 // *
 // * This program is free software: you can redistribute it and/or modify
 // * it under the terms of the GNU Affero General Public License as published
@@ -156,10 +156,12 @@
 //                2 -> client.get(
 //                    "https://api.github.com/repos/Skytils/SkytilsMod/releases/latest"
 //                ).body()
+//
 //                1 -> client.get(
 //                    "https://api.github.com/repos/Skytils/SkytilsMod/releases"
-//                ).body<List<GithubRelease>>()[0]
-//                else -> return println("Channel set as none")
+//                ).body<List<GithubRelease>>().maxBy { SkytilsVersion(it.tagName.substringAfter("v")) }
+//
+//                else -> return println("Update Channel set as none")
 //            }
 //            val latestTag = latestRelease.tagName
 //            val currentTag = Skytils.VERSION.substringBefore("-dev")
@@ -179,7 +181,7 @@
 //        }
 //
 //        private val matched by lazy { regex.find(versionString) }
-//        val isSafe = true
+//        val isSafe by lazy { matched != null }
 //
 //        val version by lazy { matched!!.groups["version"]!!.value }
 //        val versionArtifact by lazy { DefaultArtifactVersion(matched!!.groups["version"]!!.value) }

@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -71,6 +71,7 @@ import net.minecraft.world.World
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.client.event.GuiOpenEvent
 import net.minecraftforge.client.event.RenderLivingEvent
+import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import net.minecraftforge.event.world.WorldEvent
@@ -79,11 +80,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.awt.Color
-import java.util.regex.Pattern
 
 object DungeonFeatures {
     private val deathOrPuzzleFail =
-        Pattern.compile("^ ☠ .+ and became a ghost\\.$|^PUZZLE FAIL! .+$|^\\[STATUE] Oruo the Omniscient: .+ chose the wrong answer!")
+        Regex("^ ☠ .+ and became a ghost\\.$|^PUZZLE FAIL! .+$|^\\[STATUE] Oruo the Omniscient: .+ chose the wrong answer!")
     private val thornMissMessages = arrayOf(
         "chickens",
         "shot",
@@ -108,6 +108,7 @@ object DungeonFeatures {
     private var blazes = 0
     private var secondsToPortal = 0f
     var hasClearedText = false
+    private var terracottaSpawns = hashMapOf<BlockPos, Long>()
 
     init {
         LividGuiElement()
@@ -122,6 +123,10 @@ object DungeonFeatures {
                 lastLitUpTime =
                     if (event.update.block === Blocks.sea_lantern && event.old.block === Blocks.coal_block) System.currentTimeMillis() else -1L
                 printDevMessage("change light $lastLitUpTime", "spiritbear")
+            }
+        } else if (isInTerracottaPhase && Skytils.config.terracottaRespawnTimer && dungeonFloor?.endsWith('6') == true) {
+            if (event.old.block == Blocks.air && event.update.block == Blocks.flower_pot) {
+                terracottaSpawns[event.pos] = System.currentTimeMillis() + 15000
             }
         }
     }
@@ -370,8 +375,7 @@ object DungeonFeatures {
         val unformatted = event.message.unformattedText.stripControlCodes()
         if (Utils.inDungeons) {
             if (Skytils.config.autoCopyFailToClipboard) {
-                val deathFailMatcher = deathOrPuzzleFail.matcher(unformatted)
-                if (deathFailMatcher.find() || (unformatted.startsWith("[CROWD]") && thornMissMessages.any {
+                if (deathOrPuzzleFail.containsMatchIn(unformatted) || (unformatted.startsWith("[CROWD]") && thornMissMessages.any {
                         unformatted.contains(
                             it,
                             true
@@ -410,9 +414,12 @@ object DungeonFeatures {
                     hasBossSpawned = true
                 }
                 if (bossName == "Sadan") {
-                    if (unformatted.contains("So you made it all the way here")) isInTerracottaPhase = true
-                    if (unformatted.contains("ENOUGH!") || unformatted.contains("It was inevitable.")) isInTerracottaPhase =
-                        false
+                    if (unformatted.contains("So you made it all the way here")) {
+                        isInTerracottaPhase = true
+                    } else if (unformatted.contains("ENOUGH!") || unformatted.contains("It was inevitable.")) {
+                        isInTerracottaPhase = false
+                        terracottaSpawns.clear()
+                    }
                 }
             }
         }
@@ -549,6 +556,26 @@ object DungeonFeatures {
         }
     }
 
+    @SubscribeEvent
+    fun onRenderWorld(event: RenderWorldLastEvent) {
+        val stack = UMatrixStack()
+        GlStateManager.disableCull()
+        GlStateManager.disableDepth()
+        terracottaSpawns.entries.removeAll {
+            val diff = it.value - System.currentTimeMillis()
+            RenderUtil.drawLabel(
+                it.key.middleVec(),
+                "${(diff / 1000.0).roundToPrecision(2)}s",
+                Color.WHITE,
+                event.partialTicks,
+                stack
+            )
+            return@removeAll diff < 0
+        }
+        GlStateManager.enableCull()
+        GlStateManager.enableDepth()
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onReceivePacket(event: MainReceivePacketEvent<*, *>) {
         if (!Utils.inSkyblock) return
@@ -660,6 +687,7 @@ object DungeonFeatures {
         startWithoutFullParty = false
         blazes = 0
         hasClearedText = false
+        terracottaSpawns.clear()
     }
 
     class PortalTimer : GuiElement("Blood Room Portal Timer", FloatPair(0.05f, 0.4f)) {

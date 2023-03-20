@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2023 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,10 +23,11 @@ import gg.essential.universal.utils.MCClickEventAction
 import gg.essential.universal.wrappers.message.UTextComponent
 import gg.skytils.skytilsmod.Skytils
 import gg.skytils.skytilsmod.Skytils.Companion.mc
-import gg.skytils.skytilsmod.utils.SBInfo
-import gg.skytils.skytilsmod.utils.ScoreboardUtil
-import gg.skytils.skytilsmod.utils.SkyblockIsland
+import gg.skytils.skytilsmod.utils.*
 import net.minecraft.init.Blocks
+import net.minecraft.util.BlockPos
+import net.minecraft.util.MovingObjectPosition
+import net.minecraftforge.client.event.DrawBlockHighlightEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -35,7 +36,16 @@ object GardenFeatures {
     private val cleanupRegex = Regex("^\\s*Cleanup: [\\d.]+%$")
     var isCleaningPlot = false
         private set
-    val trashBlocks = setOf(Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower)
+    val trashBlocks = setOf(
+        Blocks.tallgrass,
+        Blocks.red_flower,
+        Blocks.yellow_flower,
+        Blocks.double_plant,
+        Blocks.leaves,
+        Blocks.leaves2
+    )
+    private val scythes = hashMapOf("SAM_SCYTHE" to 1, "GARDEN_SCYTHE" to 2)
+
 
     // TODO: New visitors might not be spawned in after time is up if player is offline (needs confirmation)
     private val visitorCount = Regex("^\\s*§r§b§lVisitors: §r§f\\((?<visitors>\\d+)\\)§r\$")
@@ -70,7 +80,7 @@ object GardenFeatures {
                 lastKnownVisitorCount =
                     (ScoreboardUtil.sidebarLines.firstNotNullOfOrNull { visitorCount.find(it) }?.groups?.get("visitors")?.value?.toIntOrNull()
                         ?: 0).also {
-                        if (it > lastKnownVisitorCount) {
+                        if (it > lastKnownVisitorCount && Skytils.config.visitorNotifications) {
                             UChat.chat("${Skytils.prefix} §b${it} visitors are available on your garden!")
                         }
                     }
@@ -91,6 +101,38 @@ object GardenFeatures {
                         )
                     )
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    fun onBlockSelect(event: DrawBlockHighlightEvent) {
+        if (!Utils.inSkyblock || !Skytils.config.showSamScytheBlocks) return
+
+        if (event.target.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return
+
+        val size = scythes[ItemUtil.getSkyBlockItemID(mc.thePlayer.heldItem)] ?: return
+        val base = event.target.blockPos
+        val baseState = mc.theWorld.getBlockState(base)
+
+        if (baseState.block !in trashBlocks) return
+        RenderUtil.drawSelectionBox(
+            base,
+            baseState.block,
+            Skytils.config.samScytheColor,
+            event.partialTicks,
+        )
+        for (pos in BlockPos.getAllInBox(
+            base.add(-size, -size, -size), base.add(size, size, size)
+        )) {
+            val state = mc.theWorld.getBlockState(pos)
+            if (state.block in trashBlocks) {
+                RenderUtil.drawSelectionBox(
+                    pos,
+                    state.block,
+                    Skytils.config.samScytheColor,
+                    event.partialTicks,
+                )
             }
         }
     }

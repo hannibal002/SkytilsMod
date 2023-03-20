@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -24,7 +24,7 @@ import java.security.MessageDigest
 plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.serialization") version "1.8.10"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.0"
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("io.github.juuxel.loom-quiltflower") version "1.8.0"
@@ -33,7 +33,7 @@ plugins {
     signing
 }
 
-version = "1.4.3-pre1"
+version = "1.5.0-pre1"
 group = "gg.skytils"
 
 repositories {
@@ -119,7 +119,7 @@ dependencies {
     }
 
     shadowMe(platform(kotlin("bom")))
-    shadowMe(platform(ktor("bom", "2.2.3")))
+    shadowMe(platform(ktor("bom", "2.2.4")))
     shadowMe(ktor("serialization-kotlinx-json-jvm"))
     shadowMe(ktor("client-core-jvm"))
     shadowMe(ktor("client-cio-jvm"))
@@ -174,7 +174,7 @@ tasks {
         doLast {
             MessageDigest.getInstance("SHA-256").digest(archiveFile.get().asFile.readBytes())
                 .let {
-                    println("SHA-256: " + it.joinToString(separator = "") { "%02x".format(it) }.toUpperCase())
+                    println("SHA-256: " + it.joinToString(separator = "") { "%02x".format(it) }.uppercase())
                 }
         }
     }

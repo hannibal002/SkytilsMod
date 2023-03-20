@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -36,6 +36,7 @@ import gg.skytils.skytilsmod.features.impl.events.TechnoMayor
 import gg.skytils.skytilsmod.features.impl.farming.FarmingFeatures
 import gg.skytils.skytilsmod.features.impl.farming.GardenFeatures
 import gg.skytils.skytilsmod.features.impl.farming.TreasureHunter
+import gg.skytils.skytilsmod.features.impl.farming.VisitorHelper
 import gg.skytils.skytilsmod.features.impl.handlers.*
 import gg.skytils.skytilsmod.features.impl.mining.MiningFeatures
 import gg.skytils.skytilsmod.features.impl.mining.StupidTreasureChestOpeningThing
@@ -298,6 +299,7 @@ class Skytils {
             MinionFeatures,
             MiscFeatures,
             MythologicalTracker,
+            PartyAddons,
             PartyFeatures,
             PartyFinderStats,
             PetFeatures,
@@ -327,8 +329,9 @@ class Skytils {
             TicTacToeSolver,
             TreasureHunter,
             TriviaSolver,
+            VisitorHelper,
             WaterBoardSolver,
-            Waypoints,
+            Waypoints
         ).forEach(MinecraftForge.EVENT_BUS::register)
     }
 

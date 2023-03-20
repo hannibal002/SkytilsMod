@@ -1,6 +1,6 @@
 /*
  * Skytils - Hypixel Skyblock Quality of Life Mod
- * Copyright (C) 2022 Skytils
+ * Copyright (C) 2020-2023 Skytils
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -51,11 +51,11 @@ import kotlin.math.roundToInt
  */
 object ContainerSellValue {
 
-    val element = SellValueDisplay()
+    private val element = SellValueDisplay()
 
     /**
      * Represents a line in the sell value display. To conserve space, multiple items can
-     * be stacked into one line if their display names are equal, so all of the original
+     * be stacked into one line if their display names are equal, so all the original
      * `ItemStack`s must be saved to find the lowest BIN price of this display line.
      */
     private class DisplayLine(itemStack: ItemStack) {
@@ -78,8 +78,8 @@ object ContainerSellValue {
     class SellValueDisplay : GuiElement("Container Sell Value", FloatPair(0.258f, 0.283f)) {
 
         internal val rightAlign: Boolean
-            get() = element.actualX > (UResolution.scaledWidth * 0.75f) ||
-                    (element.actualX < UResolution.scaledWidth / 2f && element.actualX > UResolution.scaledWidth / 4f)
+            get() = actualX > (UResolution.scaledWidth * 0.75f) ||
+                    (actualX < UResolution.scaledWidth / 2f && actualX > UResolution.scaledWidth / 4f)
         internal val textPosX: Float
             get() = if (rightAlign) actualWidth else 0f
         internal val alignment: SmartFontRenderer.TextAlignment
@@ -105,8 +105,10 @@ object ContainerSellValue {
 
         override val toggled: Boolean
             get() = Skytils.config.containerSellValue
-        override val height: Int = fr.FONT_HEIGHT * (Skytils.config.containerSellValueMaxItems + 2)
-        override val width: Int = fr.getStringWidth("Dctr's Space Helmet - 900M")
+        override val height: Int
+            get() = fr.FONT_HEIGHT * 3
+        override val width: Int
+            get() = fr.getStringWidth("Dctr's Space Helmet - 900M")
 
         init {
             Skytils.guiManager.registerElement(this)
