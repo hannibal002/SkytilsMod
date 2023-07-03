@@ -35,7 +35,6 @@ import gg.skytils.skytilsmod.events.impl.CheckRenderEntityEvent
 import gg.skytils.skytilsmod.events.impl.PacketEvent.ReceiveEvent
 import gg.skytils.skytilsmod.events.impl.RenderHUDEvent
 import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
-import gg.skytils.skytilsmod.features.impl.handlers.PotionEffectTimers
 import gg.skytils.skytilsmod.utils.*
 import gg.skytils.skytilsmod.utils.NumberUtil.roundToPrecision
 import gg.skytils.skytilsmod.utils.NumberUtil.toRoman
@@ -546,16 +545,16 @@ object SlayerFeatures : CoroutineScope {
                 }
             }
         }
-        if (Skytils.config.ignorePacifiedBlazes && event.entity is EntityBlaze && PotionEffectTimers.potionEffectTimers.containsKey(
-                "Smoldering Polarization"
-            )
-        ) {
-            (slayer as? DemonlordSlayer)?.run {
-                if (event.entity.getDistanceSqToEntity(mc.renderViewEntity) > 3 * 3 && event.entity != entity) {
-                    event.isCanceled = true
-                }
-            }
-        }
+//        if (Skytils.config.ignorePacifiedBlazes && event.entity is EntityBlaze && PotionEffectTimers.potionEffectTimers.containsKey(
+//                "Smoldering Polarization"
+//            )
+//        ) {
+//            (slayer as? DemonlordSlayer)?.run {
+//                if (event.entity.getDistanceSqToEntity(mc.renderViewEntity) > 3 * 3 && event.entity != entity) {
+//                    event.isCanceled = true
+//                }
+//            }
+//        }
     }
 
     @SubscribeEvent
