@@ -27,7 +27,6 @@ import gg.skytils.skytilsmod.core.DataFetcher
 import gg.skytils.skytilsmod.core.SoundQueue
 import gg.skytils.skytilsmod.core.TickTask
 import gg.skytils.skytilsmod.events.impl.PacketEvent.ReceiveEvent
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.utils.Utils
 import gg.skytils.skytilsmod.utils.stripControlCodes
 import net.minecraft.client.gui.GuiChat
@@ -68,8 +67,7 @@ object FarmingFeatures {
         }
         if (Skytils.config.trapperPing) {
             if (unformatted.startsWith("[NPC] Trevor The Trapper: You can find your")) {
-                trapperCooldownExpire = System.currentTimeMillis() +
-                        if (MayorInfo.currentMayor == "Finnegan") 30000 else 60000
+                trapperCooldownExpire = System.currentTimeMillis() + 60000
                 animalFound = false
             } else if (unformatted.startsWith("Return to the Trapper soon to get a new animal to hunt!")) {
                 if (trapperCooldownExpire > 0 && System.currentTimeMillis() > trapperCooldownExpire) {

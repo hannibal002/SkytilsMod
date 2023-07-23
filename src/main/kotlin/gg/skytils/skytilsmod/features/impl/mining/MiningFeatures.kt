@@ -36,7 +36,6 @@ import gg.skytils.skytilsmod.core.structure.GuiElement
 import gg.skytils.skytilsmod.events.impl.BossBarEvent
 import gg.skytils.skytilsmod.events.impl.GuiContainerEvent
 import gg.skytils.skytilsmod.events.impl.PacketEvent
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.utils.*
 import gg.skytils.skytilsmod.utils.RenderUtil.highlight
 import gg.skytils.skytilsmod.utils.graphics.colors.ColorFactory
@@ -353,11 +352,7 @@ object MiningFeatures {
     @SubscribeEvent
     fun onRenderLivingPre(event: RenderLivingEvent.Pre<EntityLivingBase?>) {
         if (!Utils.inSkyblock) return
-        if (Skytils.config.crystalHollowWaypoints && event.entity is EntityOtherPlayerMP && event.entity.name == "Team Treasurite" && event.entity.baseMaxHealth == if (MayorInfo.mayorPerks.contains(
-                    "DOUBLE MOBS HP!!!"
-                )
-            ) 2_000_000.0 else 1_000_000.0
-        ) {
+        if (Skytils.config.crystalHollowWaypoints && event.entity is EntityOtherPlayerMP && event.entity.name == "Team Treasurite" && event.entity.baseMaxHealth == 1_000_000.0) {
             waypoints["Corleone"] = event.entity.position
         }
     }

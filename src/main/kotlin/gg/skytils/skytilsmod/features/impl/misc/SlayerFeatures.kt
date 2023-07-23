@@ -34,7 +34,6 @@ import gg.skytils.skytilsmod.events.impl.BlockChangeEvent
 import gg.skytils.skytilsmod.events.impl.CheckRenderEntityEvent
 import gg.skytils.skytilsmod.events.impl.PacketEvent.ReceiveEvent
 import gg.skytils.skytilsmod.events.impl.RenderHUDEvent
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.utils.*
 import gg.skytils.skytilsmod.utils.NumberUtil.roundToPrecision
 import gg.skytils.skytilsmod.utils.NumberUtil.toRoman
@@ -501,7 +500,7 @@ object SlayerFeatures : CoroutineScope {
         val entity = event.target as? EntityLivingBase ?: return
 
         if (!hasSlayerText || !Utils.inSkyblock || event.entity != mc.thePlayer || !Skytils.config.useSlayerHitMethod) return
-        if ((if (MayorInfo.mayorPerks.contains("DOUBLE MOBS HP!!!")) 2 else 1) * floor(entity.baseMaxHealth).toInt() == expectedMaxHp) {
+        if (floor(entity.baseMaxHealth).toInt() == expectedMaxHp) {
             printDevMessage("A valid entity was attacked", "slayer", "seraph", "seraphHit")
             hitMap.compute(entity) { _, int ->
                 return@compute (int ?: 0).inc()
@@ -956,7 +955,7 @@ object SlayerFeatures : CoroutineScope {
             get() = entity.javaClass
         private val currentTier = getTier(name)
         private val expectedHealth =
-            (if ("DOUBLE MOBS HP!!!" in MayorInfo.mayorPerks) 2 else 1) * (BossHealths[name.substringBefore(
+            (BossHealths[name.substringBefore(
                 " "
             )]?.get(currentTier) ?: 0)
 

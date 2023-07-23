@@ -28,7 +28,6 @@ import gg.skytils.skytilsmod.core.structure.GuiElement
 import gg.skytils.skytilsmod.events.impl.*
 import gg.skytils.skytilsmod.events.impl.GuiContainerEvent.SlotClickEvent
 import gg.skytils.skytilsmod.events.impl.PacketEvent.ReceiveEvent
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.listeners.DungeonListener
 import gg.skytils.skytilsmod.mixins.transformers.accessors.AccessorEnumDyeColor
 import gg.skytils.skytilsmod.utils.*
@@ -509,11 +508,12 @@ object DungeonFeatures {
             if (!mc.renderManager.isDebugBoundingBox) {
                 if (!event.entity.isInvisible) {
                     if (event.entity is EntityBat && Skytils.config.showBatHitboxes && !hasBossSpawned &&
-                        if (MayorInfo.currentMayor == "Derpy") equalsOneOf(
-                            event.entity.maxHealth,
-                            200f,
-                            800f
-                        ) else equalsOneOf(
+//                        if (MayorInfo.currentMayor == "Derpy") equalsOneOf(
+//                            event.entity.maxHealth,
+//                            200f,
+//                            800f
+//                        ) else
+                            equalsOneOf(
                             event.entity.maxHealth,
                             100f,
                             400f
