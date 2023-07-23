@@ -21,7 +21,6 @@ import gg.essential.universal.UChat
 import gg.skytils.skytilsmod.Skytils
 import gg.skytils.skytilsmod.core.GuiManager.createTitle
 import gg.skytils.skytilsmod.core.structure.GuiElement
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.features.impl.trackers.impl.MayorJerryTracker
 import gg.skytils.skytilsmod.utils.NumberUtil
 import gg.skytils.skytilsmod.utils.RenderUtil.renderItem
@@ -43,7 +42,7 @@ object MayorJerry {
     var lastJerry = -1L
 
     init {
-        JerryPerkGuiElement()
+//        JerryPerkGuiElement()
         JerryTimerGuiElement()
     }
 
@@ -76,52 +75,52 @@ object MayorJerry {
         }
     }
 
-    class JerryPerkGuiElement : GuiElement("Mayor Jerry Perk Display", x = 10, y = 10) {
-        override fun render() {
-            if (Utils.inSkyblock && toggled && MayorInfo.currentMayor == "Jerry") {
-                if (MayorInfo.jerryMayor == null || MayorInfo.newJerryPerks <= System.currentTimeMillis()) {
-                    ScreenRenderer.fontRenderer.drawString("Visit Jerry!", 0f, 0f, CommonColors.RED)
-                } else {
-                    val timeUntilNext = (MayorInfo.newJerryPerks - System.currentTimeMillis()).milliseconds
-                    ScreenRenderer.fontRenderer.drawString(
-                        "${MayorInfo.jerryMayor!!.name}: ${
-                            timeUntilNext.toComponents { hours, minutes, _, _ ->
-                                "${hours}h${minutes}m"
-                            }
-                        }",
-                        0f,
-                        0f,
-                        CommonColors.ORANGE,
-                        SmartFontRenderer.TextAlignment.LEFT_RIGHT,
-                        SmartFontRenderer.TextShadow.NORMAL
-                    )
-                }
-            }
-        }
-
-        override fun demoRender() {
-            ScreenRenderer.fontRenderer.drawString(
-                "Paul (0:30)",
-                0f,
-                0f,
-                CommonColors.ORANGE,
-                SmartFontRenderer.TextAlignment.LEFT_RIGHT,
-                SmartFontRenderer.TextShadow.NORMAL
-            )
-        }
-
-        override val height: Int
-            get() = ScreenRenderer.fontRenderer.FONT_HEIGHT
-        override val width: Int
-            get() = ScreenRenderer.fontRenderer.getStringWidth("Paul (0:30)")
-
-        override val toggled: Boolean
-            get() = Skytils.config.displayJerryPerks
-
-        init {
-            Skytils.guiManager.registerElement(this)
-        }
-    }
+//    class JerryPerkGuiElement : GuiElement("Mayor Jerry Perk Display", x = 10, y = 10) {
+//        override fun render() {
+//            if (Utils.inSkyblock && toggled && MayorInfo.currentMayor == "Jerry") {
+//                if (MayorInfo.jerryMayor == null || MayorInfo.newJerryPerks <= System.currentTimeMillis()) {
+//                    ScreenRenderer.fontRenderer.drawString("Visit Jerry!", 0f, 0f, CommonColors.RED)
+//                } else {
+//                    val timeUntilNext = (MayorInfo.newJerryPerks - System.currentTimeMillis()).milliseconds
+//                    ScreenRenderer.fontRenderer.drawString(
+//                        "${MayorInfo.jerryMayor!!.name}: ${
+//                            timeUntilNext.toComponents { hours, minutes, _, _ ->
+//                                "${hours}h${minutes}m"
+//                            }
+//                        }",
+//                        0f,
+//                        0f,
+//                        CommonColors.ORANGE,
+//                        SmartFontRenderer.TextAlignment.LEFT_RIGHT,
+//                        SmartFontRenderer.TextShadow.NORMAL
+//                    )
+//                }
+//            }
+//        }
+//
+//        override fun demoRender() {
+//            ScreenRenderer.fontRenderer.drawString(
+//                "Paul (0:30)",
+//                0f,
+//                0f,
+//                CommonColors.ORANGE,
+//                SmartFontRenderer.TextAlignment.LEFT_RIGHT,
+//                SmartFontRenderer.TextShadow.NORMAL
+//            )
+//        }
+//
+//        override val height: Int
+//            get() = ScreenRenderer.fontRenderer.FONT_HEIGHT
+//        override val width: Int
+//            get() = ScreenRenderer.fontRenderer.getStringWidth("Paul (0:30)")
+//
+//        override val toggled: Boolean
+//            get() = Skytils.config.displayJerryPerks
+//
+//        init {
+//            Skytils.guiManager.registerElement(this)
+//        }
+//    }
 
     class JerryTimerGuiElement : GuiElement("Hidden Jerry Timer", x = 10, y = 10) {
         private val villagerEgg = ItemStack(Items.spawn_egg, 1, 120)

@@ -32,7 +32,6 @@ import gg.skytils.skytilsmod.core.DataFetcher
 import gg.skytils.skytilsmod.core.PersistentSave
 import gg.skytils.skytilsmod.core.UpdateChecker
 import gg.skytils.skytilsmod.features.impl.events.GriffinBurrows
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.features.impl.mining.MiningFeatures
 import gg.skytils.skytilsmod.features.impl.misc.Ping
 import gg.skytils.skytilsmod.features.impl.misc.PricePaid
@@ -125,18 +124,18 @@ object SkytilsCommand : BaseCommand("skytils", listOf("st")) {
                             }
                         }
 
-                        "mayor" -> {
-                            Skytils.IO.async {
-                                MayorInfo.fetchMayorData()
-                                MayorInfo.fetchJerryData()
-                            }.invokeOnCompletion {
-                                it?.run {
-                                    UChat.chat("$failPrefix §cFailed to reload mayor data due to a ${it::class.simpleName ?: "error"}: ${it.message}!")
-                                }?.ifNull {
-                                    UChat.chat("$prefix §bMayor data has been §freloaded§b successfully.")
-                                }
-                            }
-                        }
+//                        "mayor" -> {
+//                            Skytils.IO.async {
+//                                MayorInfo.fetchMayorData()
+//                                MayorInfo.fetchJerryData()
+//                            }.invokeOnCompletion {
+//                                it?.run {
+//                                    UChat.chat("$failPrefix §cFailed to reload mayor data due to a ${it::class.simpleName ?: "error"}: ${it.message}!")
+//                                }?.ifNull {
+//                                    UChat.chat("$prefix §bMayor data has been §freloaded§b successfully.")
+//                                }
+//                            }
+//                        }
 
                         "slayer" -> {
                             for (entity in mc.theWorld.getEntitiesWithinAABBExcludingEntity(

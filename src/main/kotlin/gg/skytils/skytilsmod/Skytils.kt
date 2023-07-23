@@ -249,7 +249,7 @@ class Skytils {
             DungeonListener,
             guiManager,
             LocalAPI,
-            MayorInfo,
+//            MayorInfo,
             SBInfo,
             SoundQueue,
             TickTask,
@@ -343,7 +343,7 @@ class Skytils {
         usingNEU = Loader.isModLoaded("notenoughupdates")
         usingSBA = Loader.isModLoaded("skyblockaddons")
 
-        MayorInfo.fetchMayorData()
+//        MayorInfo.fetchMayorData()
 
         PersistentSave.loadData()
 

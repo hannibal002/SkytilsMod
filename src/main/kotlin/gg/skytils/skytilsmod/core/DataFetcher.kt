@@ -28,8 +28,6 @@ import gg.skytils.skytilsmod.features.impl.dungeons.solvers.ThreeWeirdosSolver
 import gg.skytils.skytilsmod.features.impl.dungeons.solvers.TriviaSolver
 import gg.skytils.skytilsmod.features.impl.farming.FarmingFeatures
 import gg.skytils.skytilsmod.features.impl.farming.TreasureHunter
-import gg.skytils.skytilsmod.features.impl.handlers.Mayor
-import gg.skytils.skytilsmod.features.impl.handlers.MayorInfo
 import gg.skytils.skytilsmod.features.impl.handlers.SpamHider
 import gg.skytils.skytilsmod.features.impl.mining.MiningFeatures
 import gg.skytils.skytilsmod.features.impl.misc.ItemFeatures
@@ -99,12 +97,12 @@ object DataFetcher {
                         SkillUtils.runeXp.putAll(hotmXp)
                     }
                 }
-                client.get("${dataUrl}constants/mayors.json").body<List<Mayor>>().apply {
-                    Utils.checkThreadAndQueue {
-                        MayorInfo.mayorData.clear()
-                        MayorInfo.mayorData.addAll(this)
-                    }
-                }
+//                client.get("${dataUrl}constants/mayors.json").body<List<Mayor>>().apply {
+//                    Utils.checkThreadAndQueue {
+//                        MayorInfo.mayorData.clear()
+//                        MayorInfo.mayorData.addAll(this)
+//                    }
+//                }
                 client.get("${dataUrl}solvers/threeweirdos.json").body<List<String>>().apply {
                     Utils.checkThreadAndQueue {
                         ThreeWeirdosSolver.solutions.clear()
