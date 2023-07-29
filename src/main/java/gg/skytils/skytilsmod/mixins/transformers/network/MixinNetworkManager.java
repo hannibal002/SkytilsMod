@@ -32,6 +32,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinNetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
     @Inject(method = "channelRead0", at = @At("HEAD"), cancellable = true)
     private void onReceivePacket(ChannelHandlerContext context, Packet<?> packet, CallbackInfo ci) {
-        NetworkManagerHookKt.onReceivePacket(context, packet, ci);
+        if (packet != null) {
+            NetworkManagerHookKt.onReceivePacket(context, packet, ci);
+        }
     }
 }
