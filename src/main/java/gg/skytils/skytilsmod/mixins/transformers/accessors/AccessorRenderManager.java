@@ -16,13 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package gg.skytils.skytilsmod;
+package gg.skytils.skytilsmod.mixins.transformers.accessors;
 
-public class Reference {
-    public static String dataUrl = "https://data.skytils.gg/";
-    public static final String MOD_ID = "skytils";
-    public static final String MOD_NAME = "Skytils";
-    public static final String VERSION = "1.7.5";
+import net.minecraft.client.renderer.entity.RenderManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-    public static final int apiVersion = 4;
+@Mixin(RenderManager.class)
+public interface AccessorRenderManager {
+
+    @Accessor("renderPosX")
+    double getRenderX();
+
+    @Accessor("renderPosY")
+    double getRenderY();
+
+    @Accessor("renderPosZ")
+    double getRenderZ();
 }
