@@ -16,13 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package gg.skytils.skytilsmod;
+package gg.skytils.skytilsmod.events.impl.skyblock
 
-public class Reference {
-    public static String dataUrl = "https://data.skytils.gg/";
-    public static final String MOD_ID = "skytils";
-    public static final String MOD_NAME = "Skytils";
-    public static final String VERSION = "1.7.6";
+import gg.skytils.skytilsmod.events.SkytilsEvent
 
-    public static final int apiVersion = 4;
+open class DungeonEvent : SkytilsEvent() {
+    open class PuzzleEvent(val puzzle: String) : DungeonEvent() {
+        class Discovered(puzzle: String) : PuzzleEvent(puzzle)
+        class Completed(puzzle: String) : PuzzleEvent(puzzle)
+    }
 }

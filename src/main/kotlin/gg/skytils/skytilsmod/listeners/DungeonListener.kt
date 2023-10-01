@@ -28,6 +28,7 @@ import gg.skytils.skytilsmod.Skytils.Companion.mc
 import gg.skytils.skytilsmod.commands.impl.RepartyCommand
 import gg.skytils.skytilsmod.core.TickTask
 import gg.skytils.skytilsmod.events.impl.MainReceivePacketEvent
+import gg.skytils.skytilsmod.events.impl.skyblock.DungeonEvent
 import gg.skytils.skytilsmod.features.impl.dungeons.DungeonTimer
 import gg.skytils.skytilsmod.features.impl.dungeons.ScoreCalculation
 import gg.skytils.skytilsmod.features.impl.handlers.CooldownTracker
@@ -120,9 +121,7 @@ object DungeonListener {
                 val match = reviveRegex.find(text) ?: return
                 val username = match.groups["username"]!!.value
                 val teammate = team[username] ?: return
-                if (deads.remove(teammate)) {
-                    teammate.dead = false
-                }
+                markRevived(teammate)
             }
         }
     }
@@ -143,8 +142,18 @@ object DungeonListener {
                 }
                 return@mapNotNull null
             }
-            missingPuzzles.clear()
-            missingPuzzles.addAll(localMissingPuzzles)
+            if (missingPuzzles.size != localMissingPuzzles.size || !missingPuzzles.containsAll(localMissingPuzzles)) {
+                val newPuzzles = localMissingPuzzles.filter { it !in missingPuzzles }
+                val completedPuzzles = missingPuzzles.filter { it !in localMissingPuzzles }
+                newPuzzles.forEach {
+                    DungeonEvent.PuzzleEvent.Discovered(it).postAndCatch()
+                }
+                completedPuzzles.forEach {
+                    DungeonEvent.PuzzleEvent.Completed(it).postAndCatch()
+                }
+                missingPuzzles.clear()
+                missingPuzzles.addAll(localMissingPuzzles)
+            }
         }
         TickTask(2, repeats = true) {
             if (Utils.inDungeons && (DungeonTimer.scoreShownAt == -1L || System.currentTimeMillis() - DungeonTimer.scoreShownAt < 1500)) {
@@ -158,11 +167,8 @@ object DungeonListener {
                         it.name == teammate.playerName && it.uniqueID.version() == 4
                     }
                     if (self?.dead != true) {
-                        if (entry.endsWith("§r§cDEAD§r§f)§r")) {
-                            markDead(teammate)
-                        } else if (deads.remove(teammate)) {
-                            teammate.dead = true
-                        }
+                        if (entry.endsWith("§r§cDEAD§r§f)§r")) markDead(teammate)
+                        else markRevived(teammate)
                     }
                 }
             }
@@ -172,10 +178,9 @@ object DungeonListener {
     fun markDead(teammate: DungeonTeammate) {
         if (deads.add(teammate)) {
             val time = System.currentTimeMillis()
-            val lastDeath = teammate.lastMarkedDead
-            // there's no way they die twice in less than half a second
-            if (lastDeath != null && time - lastDeath <= 500) return
-            teammate.lastMarkedDead = time
+            val lastDeath = teammate.lastLivingStateChange
+            if (lastDeath != null && time - lastDeath <= 1000) return
+            teammate.lastLivingStateChange = time
             teammate.dead = true
             teammate.deaths++
             val totalDeaths = team.values.sumOf { it.deaths }
@@ -203,7 +208,15 @@ object DungeonListener {
         }
     }
 
+    fun markRevived(teammate: DungeonTeammate) {
+        if (deads.remove(teammate)) {
+            teammate.dead = false
+            teammate.lastLivingStateChange = System.currentTimeMillis()
+        }
+    }
+
     fun markAllRevived() {
+        printDevMessage("${Skytils.prefix} §fdebug: marking all teammates as revived", "scorecalc")
         deads.clear()
         team.values.forEach {
             it.dead = false
@@ -300,7 +313,7 @@ object DungeonListener {
         var player: EntityPlayer? = null
         var dead = false
         var deaths = 0
-        var lastMarkedDead: Long? = null
+        var lastLivingStateChange: Long? = null
 
 
         fun canRender() = player != null && player!!.health > 0 && !dead
